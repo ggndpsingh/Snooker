@@ -4,23 +4,42 @@ import SwiftUI
 
 struct GameView: View {
     @ObservedObject var game: Game
+    private var viewState: GameViewState { game.viewState }
     
     var body: some View {
         ZStack {
             Color.secondarySystemBackground
                 .edgesIgnoringSafeArea(.all)
             VStack {
-                PlayersView(playerOne: game.playerOne, playerTwo: game.playerTwo, activePlayerID: game.activePlayer.id)
-                BallsView(potAction: game.pot)
+                PlayersView(playerOne: viewState.playerA, playerTwo: viewState.playerB, activePlayer: viewState.activePlayer)
+                BallsView(ballOn: viewState.ballOn, potAction: { ball in
+                    game.perform(.pot(ball))
+                })
                 Spacer()
-                SwitchPlayerView(switchPlayerHandler: game.switchPlayer)
+                SwitchPlayerView(switchPlayerHandler: {
+                    game.perform(.switchPlayer)
+                })
             }
         }
     }
 }
 
+struct PlayersView: View {
+    @ObservedObject var playerOne: GameViewState.Player
+    @ObservedObject var playerTwo: GameViewState.Player
+    let activePlayer: PlayerType
+    
+    var body: some View {
+        HStack() {
+            PlayerView(player: playerOne, isActive: activePlayer == .A)
+            Spacer()
+            PlayerView(player: playerTwo, isActive: activePlayer == .B)
+        }
+    }
+}
+
 struct PlayerView: View {
-    @ObservedObject var player: Player
+    @ObservedObject var player: GameViewState.Player
     let isActive: Bool
     
     var body: some View {
@@ -33,7 +52,7 @@ struct PlayerView: View {
     }
     
     struct ScoreView: View {
-        @ObservedObject var player: Player
+        @ObservedObject var player: GameViewState.Player
         let isActive: Bool
         
         var body: some View {
@@ -52,22 +71,9 @@ struct PlayerView: View {
     }
 }
 
-struct PlayersView: View {
-    @ObservedObject var playerOne: Player
-    @ObservedObject var playerTwo: Player
-    let activePlayerID: String
-    
-    var body: some View {
-        HStack() {
-            PlayerView(player: playerOne, isActive: playerOne.id == activePlayerID)
-            Spacer()
-            PlayerView(player: playerTwo, isActive: playerTwo.id == activePlayerID)
-        }
-    }
-}
-
 struct BallView: View {
     let ball: Ball
+    let isOn: Bool
     let potAction: (Ball) -> Void
     
     var body: some View {
@@ -79,7 +85,8 @@ struct BallView: View {
                 .foregroundColor(Color.white)
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, idealHeight: 64, maxHeight: 64, alignment: .center)
         }
-        .background(ball.color)
+        .disabled(!isOn)
+        .background(isOn ? ball.color : Color.gray)
         .clipShape(
             RoundedRectangle(cornerRadius: 12, style:.continuous))
     }
@@ -87,23 +94,27 @@ struct BallView: View {
 
 struct BallsRowView: View {
     let balls: [Ball]
+    let ballOn: BallOn
     let potAction: (Ball) -> Void
+    
     var body: some View {
         HStack {
             ForEach(balls, id: \.self) { ball in
-                BallView(ball: ball, potAction: potAction)
+                BallView(ball: ball, isOn: ballOn.isOn(ball), potAction: potAction)
             }
         }
     }
 }
 
 struct BallsView: View {
+    let ballOn: BallOn
     let potAction: (Ball) -> Void
+    
     var body: some View {
         VStack(spacing: 16) {
-            BallView(ball: .red, potAction: potAction)
-            BallsRowView(balls: [.yellow, .green, .brown], potAction: potAction)
-            BallsRowView(balls: [.blue, .pink, .black], potAction: potAction)
+            BallView(ball: .red, isOn: ballOn == .red, potAction: potAction)
+            BallsRowView(balls: [.yellow, .green, .brown], ballOn: ballOn, potAction: potAction)
+            BallsRowView(balls: [.blue, .pink, .black], ballOn: ballOn, potAction: potAction)
         }
         .padding()
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 260, alignment: .center)

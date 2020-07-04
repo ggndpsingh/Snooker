@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-enum Ball: Int, CaseIterable {
+enum Ball: Int, Equatable, CaseIterable, CustomStringConvertible {
     case red = 1
     case yellow
     case green
@@ -13,6 +13,20 @@ enum Ball: Int, CaseIterable {
     
     static var colors: [Ball] {
         allCases.filter { $0 != .red }
+    }
+    
+    var points: Int { rawValue }
+    
+    var description: String {
+        switch self {
+        case .red: return "Red"
+        case .yellow: return "Yellow"
+        case .green: return "Green"
+        case .brown: return "Brown"
+        case .blue: return "Blue"
+        case .pink: return "Pink"
+        case .black: return "black"
+        }
     }
 }
 
@@ -26,6 +40,26 @@ extension Ball {
         case .blue: return Color.blue
         case .pink: return Color.pink
         case .black: return Color.black
+        }
+    }
+}
+
+enum BallOn: Equatable {
+    case none
+    case red
+    case colors
+    case color(Ball)
+    
+    func isOn(_ ball: Ball) -> Bool {
+        switch self {
+        case .red:
+            return ball == .red
+        case .colors:
+            return Ball.colors.contains(ball)
+        case .color(let this):
+            return this == ball
+        case .none:
+            return false
         }
     }
 }

@@ -24,3 +24,11 @@ extension Player: Equatable {
         lhs.id == rhs.id
     }
 }
+
+enum PlayerType {
+    case A, B
+    
+    mutating func toggle() {
+        self = self == .A ? .B : .A
+    }
+}

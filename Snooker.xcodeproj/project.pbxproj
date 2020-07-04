@@ -113,6 +113,7 @@
 		E6289FC724A5F4F700F2D747 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				E682FFE924A734E000BBB9C2 /* Scoring */,
 				E628A01824A5F97600F2D747 /* Extensions */,
 				E628A01124A5F7C000F2D747 /* Models */,
 				E628A00B24A5F67500F2D747 /* SnookerApp.swift */,
@@ -185,6 +186,13 @@
 				E682FFE624A731D100BBB9C2 /* UIColor.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		E682FFE924A734E000BBB9C2 /* Scoring */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Scoring;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
