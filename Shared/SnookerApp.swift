@@ -6,7 +6,7 @@ import SwiftUI
 struct SnookerApp: App {
     var body: some Scene {
         WindowGroup {
-            GameView(game: .testGame)
+            GameView()
         }
     }
 }

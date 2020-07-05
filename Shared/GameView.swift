@@ -3,8 +3,16 @@
 import SwiftUI
 
 struct GameView: View {
-    @ObservedObject var game: Game
-    private var viewState: GameViewState { game.viewState }
+    @ObservedObject var viewModel: GameViewModel
+    private var viewState: GameViewState { viewModel.viewState }
+    
+    init(viewModel: GameViewModel = .init(game: .testGame)) {
+        self.viewModel = viewModel
+    }
+    
+    func perform(_ action: Game.Action) {
+        viewModel.perform(action)
+    }
     
     var body: some View {
         ZStack {
@@ -13,12 +21,17 @@ struct GameView: View {
             VStack {
                 PlayersView(playerOne: viewState.playerA, playerTwo: viewState.playerB, activePlayer: viewState.activePlayer)
                 BallsView(ballOn: viewState.ballOn, potAction: { ball in
-                    game.perform(.pot(ball))
+                    perform(.pot(ball))
                 })
+                
                 Spacer()
-                SwitchPlayerView(switchPlayerHandler: {
-                    game.perform(.switchPlayer)
-                })
+                
+                SwitchPlayerView(
+                    switchPlayerHandler: {
+                        perform(.switchPlayer)
+                    },
+                    resetHandler: viewModel.reset
+                )
             }
         }
     }
@@ -27,7 +40,7 @@ struct GameView: View {
 struct PlayersView: View {
     @ObservedObject var playerOne: GameViewState.Player
     @ObservedObject var playerTwo: GameViewState.Player
-    let activePlayer: PlayerType
+    let activePlayer: PlayerPosition
     
     var body: some View {
         HStack() {
@@ -123,22 +136,48 @@ struct BallsView: View {
 
 struct SwitchPlayerView: View {
     let switchPlayerHandler: () -> Void
+    let resetHandler: () -> Void
     var body: some View {
-        Button(action: switchPlayerHandler) {
-            Image(systemName: "arrow.right.arrow.left")
+        HStack {
+            Button(action: resetHandler) {
+                Image(systemName: "arrow.counterclockwise")
+            }
+            .frame(width: 60, height: 60, alignment: .center)
+            .overlay(
+                Circle()
+                    .stroke(Color.blue,lineWidth: 2)
+            ).foregroundColor(Color.blue)
+            
+            Spacer()
+            
+            Button(action: switchPlayerHandler) {
+                Image(systemName: "arrow.right.arrow.left")
+            }
+            .frame(width: 60, height: 60, alignment: .center)
+            .overlay(
+                Circle()
+                    .stroke(Color.blue,lineWidth: 2)
+            ).foregroundColor(Color.blue)
+            
+            Spacer()
+            
+            Button(action: {}) {
+                Image(systemName: "arrow.clockwise")
+            }
+            .frame(width: 60, height: 60, alignment: .center)
+            .overlay(
+                Circle()
+                    .stroke(Color.blue,lineWidth: 2)
+            ).foregroundColor(Color.blue)
         }
-        .frame(width: 60, height: 60, alignment: .center)
-        .overlay(
-            Circle()
-                .stroke(Color.blue,lineWidth: 2)
-        ).foregroundColor(Color.blue)
+        .padding(24)
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            GameView(game: .testGame)
+            GameView()
 //            GameView(game: .testGame)
 //                .previewDevice("iPad Pro (12.9-inch) (4th generation)")
 //                .preferredColorScheme(.dark)

@@ -2,11 +2,10 @@
 
 import SwiftUI
 
-class Player: Identifiable, ObservableObject {
+class Player: Identifiable {
     let id: String
     let name: String
-    
-    @Published var score: Int
+    var score: Int
     
     internal init(id: String, name: String, score: Int = 0) {
         self.id = id
@@ -25,7 +24,7 @@ extension Player: Equatable {
     }
 }
 
-enum PlayerType {
+enum PlayerPosition {
     case A, B
     
     mutating func toggle() {
