@@ -30,4 +30,8 @@ enum PlayerPosition {
     mutating func toggle() {
         self = self == .A ? .B : .A
     }
+    
+    var other: Self {
+        self == .A ? .B : .A
+    }
 }

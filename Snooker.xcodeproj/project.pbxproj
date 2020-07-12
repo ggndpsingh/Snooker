@@ -21,6 +21,8 @@
 		E628A01724A5F85800F2D747 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = E628A01524A5F85800F2D747 /* Game.swift */; };
 		E628A01A24A5F97C00F2D747 /* UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = E628A01924A5F97C00F2D747 /* UUID.swift */; };
 		E628A01B24A5F97C00F2D747 /* UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = E628A01924A5F97C00F2D747 /* UUID.swift */; };
+		E637FC8E24B1C7CE00A800EA /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E637FC8D24B1C7CE00A800EA /* Timeline.swift */; };
+		E637FC8F24B1C7CE00A800EA /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E637FC8D24B1C7CE00A800EA /* Timeline.swift */; };
 		E682FFE424A70C6900BBB9C2 /* Ball.swift in Sources */ = {isa = PBXBuildFile; fileRef = E682FFE324A70C6900BBB9C2 /* Ball.swift */; };
 		E682FFE524A70C6900BBB9C2 /* Ball.swift in Sources */ = {isa = PBXBuildFile; fileRef = E682FFE324A70C6900BBB9C2 /* Ball.swift */; };
 		E682FFE724A731D100BBB9C2 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E682FFE624A731D100BBB9C2 /* UIColor.swift */; };
@@ -62,6 +64,7 @@
 		E628A01224A5F7C700F2D747 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		E628A01524A5F85800F2D747 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		E628A01924A5F97C00F2D747 /* UUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUID.swift; sourceTree = "<group>"; };
+		E637FC8D24B1C7CE00A800EA /* Timeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
 		E682FFE324A70C6900BBB9C2 /* Ball.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ball.swift; sourceTree = "<group>"; };
 		E682FFE624A731D100BBB9C2 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -174,6 +177,7 @@
 			children = (
 				E628A01224A5F7C700F2D747 /* Player.swift */,
 				E628A01524A5F85800F2D747 /* Game.swift */,
+				E637FC8D24B1C7CE00A800EA /* Timeline.swift */,
 				E682FFE324A70C6900BBB9C2 /* Ball.swift */,
 			);
 			path = Models;
@@ -353,6 +357,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E637FC8E24B1C7CE00A800EA /* Timeline.swift in Sources */,
 				E682FFE424A70C6900BBB9C2 /* Ball.swift in Sources */,
 				E682FFE724A731D100BBB9C2 /* UIColor.swift in Sources */,
 				E628A00F24A5F69D00F2D747 /* GameView.swift in Sources */,
@@ -367,6 +372,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E637FC8F24B1C7CE00A800EA /* Timeline.swift in Sources */,
 				E682FFE524A70C6900BBB9C2 /* Ball.swift in Sources */,
 				E682FFE824A731D100BBB9C2 /* UIColor.swift in Sources */,
 				E628A01024A5F69D00F2D747 /* GameView.swift in Sources */,
@@ -571,6 +577,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = EAN9592EK4;
@@ -595,6 +602,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = EAN9592EK4;

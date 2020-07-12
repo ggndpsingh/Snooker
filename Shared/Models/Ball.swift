@@ -16,6 +16,14 @@ enum Ball: Int, Equatable, CaseIterable, CustomStringConvertible {
     }
     
     var points: Int { rawValue }
+    var foulPoints: Int {
+        switch self {
+        case .red, .yellow, .green, .brown:
+            return 4
+        default:
+            return points
+        }
+    }
     
     var description: String {
         switch self {

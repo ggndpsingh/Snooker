@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1030"
+   LastUpgradeVersion = "1200"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -40,15 +40,6 @@
             </ActionContent>
          </ExecutionAction>
       </PreActions>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B57BDC051EEF607E00825767"
-            BuildableName = "iAuditorUITests.xctest"
-            BlueprintName = "iAuditorUITests"
-            ReferencedContainer = "container:iAuditor.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <Testables>
          <TestableReference
             skipped = "NO"

@@ -29,7 +29,7 @@ class GameViewModel: ObservableObject {
     func updateFrameStatus() {
         guard game.activeFrame.isDecided else { return }
         if !game.startNextFrame() {
-            print("Game Over!")
+//            print("Game Over!")
         }
     }
 }
@@ -71,8 +71,6 @@ class GameViewState: CustomStringConvertible {
         self.playerB = playerB
         self.activePlayer = activePlayer
         self.ballOn = ballOn
-        
-        print(self)
     }
     
     var description: String {
@@ -88,28 +86,38 @@ class Game: Identifiable {
     let id: String = UUID.id
     var playerOne: Player
     var playerTwo: Player
-    private var frames: [Frame]
-    
+    private(set) var frames: [Frame]
     var activeFrame: Frame
+    
+    var activePlayer: Player {
+        activeFrame.activePlayerPosition == .A ? playerOne : playerTwo
+    }
+    
+    var timeline: Timeline = .init()
     
     internal init(framesCount: Int, playerOne: Player, playerTwo: Player) {
         self.frames = {
             var frames: [Frame] = []
             let count = max (framesCount, 1)
-            for _ in 0..<count {
-                frames.append(.init())
+            for i in 0..<count {
+                let toBreak: PlayerPosition = i.isMultiple(of: 2) ? .A : .B
+                frames.append(.init(toBreak: toBreak))
             }
             return frames
         }()
         self.playerOne = playerOne
         self.playerTwo = playerTwo
         self.activeFrame = frames[0]
+        timeline.game = self
+        timeline.appendAction(.beginGame)
+        timeline.appendAction(.startFrame(0, activeFrame))
     }
     
     func perform(_ action: Action) {
         switch action {
         case .switchPlayer:
             activeFrame.switchPlayer()
+            timeline.appendAction(.switchActivePlayer)
         case .pot(let ball):
             switch ball {
             case .red:
@@ -117,17 +125,23 @@ class Game: Identifiable {
             default:
                 activeFrame.potColor(ball)
             }
+            timeline.appendAction(.pot(ball))
         }
-        print("\(frames.filter{$0.winnerPosition == .A}.count) (\(frames.count)) \(frames.filter{$0.winnerPosition == .B}.count)")
+//        print("\(frames.filter{$0.winnerPosition == .A}.count) (\(frames.count)) \(frames.filter{$0.winnerPosition == .B}.count)")
     }
     
     func startNextFrame() -> Bool {
-        guard
-            let activeIndex = frames.firstIndex(where: { $0.id == activeFrame.id }),
-            activeIndex < frames.count - 1
-        else { return false }
+        guard let activeIndex = frames.firstIndex(where: { $0.id == activeFrame.id }) else { return false }
+        timeline.appendAction(.endFrame(activeIndex, activeFrame))
+        
+        guard activeIndex < frames.count - 1 else {
+            timeline.appendAction(.endGame)
+            return false
+        }
         
         activeFrame = frames[activeIndex + 1]
+        timeline.appendAction(.startFrame(activeIndex + 1, activeFrame))
+        
         return true
     }
     
@@ -135,13 +149,18 @@ class Game: Identifiable {
         self.frames = {
             var frames: [Frame] = []
             let count = max (self.frames.count, 1)
-            for _ in 0..<count {
-                frames.append(.init())
+            for i in 0..<count {
+                let toBreak: PlayerPosition = i.isMultiple(of: 2) ? .A : .B
+                frames.append(.init(toBreak: toBreak))
             }
             return frames
         }()
         self.playerOne = Game.testGame.playerOne
         self.playerTwo = Game.testGame.playerTwo
+    }
+    
+    func player(at position: PlayerPosition) -> Player {
+        position == .A ? playerOne : playerTwo
     }
     
     enum Action {
@@ -190,7 +209,11 @@ class Frame: Identifiable, ObservableObject, CustomStringConvertible {
     var remainingColors: [Ball] = Ball.colors
     var onFinalColors: Bool = false
     
-    var activePlayerPosition: PlayerPosition = .A
+    var activePlayerPosition: PlayerPosition
+    
+    init(toBreak player: PlayerPosition) {
+        self.activePlayerPosition = player
+    }
     
     var winnerPosition: PlayerPosition? {
         switch status {
@@ -210,7 +233,6 @@ class Frame: Identifiable, ObservableObject, CustomStringConvertible {
         lastBallPotted = nil
         activePlayerPosition.toggle()
         onFinalColors = remainingReds == 0
-        logDetails()
     }
     
     func potRed() {
