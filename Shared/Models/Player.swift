@@ -5,16 +5,10 @@ import SwiftUI
 class Player: Identifiable {
     let id: String
     let name: String
-    var score: Int
     
     internal init(id: String, name: String, score: Int = 0) {
         self.id = id
         self.name = name
-        self.score = score
-    }
-    
-    func didPot(_ ball: Ball) {
-        score += ball.rawValue
     }
 }
 

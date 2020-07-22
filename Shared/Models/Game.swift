@@ -2,83 +2,107 @@
 
 import SwiftUI
 
+class StateViewModel: ObservableObject {
+    @Published var state: GameState = .gameNotStarted
+    let game: Game
+    
+    init(game: Game) {
+        self.game = game
+    }
+    
+    func startGame() {
+        game.startNextFrame()
+        guard let frame = game.activeFrame else { return }
+        let viewModel = GameViewModel(game: game, frame: frame)
+        state = .playing(viewModel)
+    }
+}
+
+enum GameState {
+    case gameNotStarted
+    case playing(GameViewModel)
+    case betweenFrames(Frame, Frame)
+    case gameOver
+    
+    init(game: Game) {
+        if let frame = game.activeFrame {
+            self = .playing(.init(game: game, frame: frame))
+        } else if game.decidedFrames.isEmpty {
+            self = .gameNotStarted
+        } else if game.activeFrame == nil, let last = game.lastFrame, let next = game.nextFrame {
+            self = .betweenFrames(last, next)
+        } else {
+            self = .gameOver
+        }
+    }
+}
+
 class GameViewModel: ObservableObject {
     private var game: Game
+    private let frame: Frame
+    
     var viewState: GameViewState {
         willSet {
             objectWillChange.send()
         }
     }
     
-    init(game: Game) {
+    init(game: Game, frame: Frame) {
         self.game = game
-        viewState = .init(game: game)
+        self.frame = frame
+        viewState = .init(game: game, frame: frame)
+    }
+    
+    func startNextFrame() {
+        game.startNextFrame()
     }
     
     func perform(_ action: Game.Action) {
         game.perform(action)
         updateFrameStatus()
-        viewState = .init(game: game)
+        updateViewState()
     }
     
     func reset() {
         game.reset()
-        viewState = .init(game: game)
+        updateViewState()
+    }
+    
+    func updateViewState() {
+        viewState = .init(game: game, frame: frame)
     }
     
     func updateFrameStatus() {
-        guard game.activeFrame.isDecided else { return }
-        if !game.startNextFrame() {
-//            print("Game Over!")
-        }
+        guard let frame = game.activeFrame, frame.isDecided else { return }
+        
     }
 }
 
-class GameViewState: CustomStringConvertible {
-    var playerA: GameViewState.Player
-    var playerB: GameViewState.Player
-    var activePlayer: PlayerPosition
-    var ballOn: BallOn
+class GameViewState {
+    typealias PlayerState = (name: String, score: Int)
+    private let playerA: String
+    private let playerB: String
+    let frame: FrameState
     
-    class Player: ObservableObject {
-        let name: String
-        @Published var score: Int
-        
-        internal init(name: String, score: Int) {
-            self.name = name
-            self.score = score
-        }
-        
-        func setScore(_ score: Int) {
-            self.score = score
-        }
+    var playerAState: PlayerState {
+        (name: playerA, score: frame.scoreA)
     }
     
-    init(game: Game) {
-        self.playerA = .init(name: game.playerOne.name, score: game.activeFrame.playerOneScore)
-        self.playerB = .init(name: game.playerTwo.name, score: game.activeFrame.playerTwoScore)
-        self.activePlayer = game.activeFrame.activePlayerPosition
-        self.ballOn = game.activeFrame.ballOn
+    var playerBState: PlayerState {
+        (name: playerB, score: frame.scoreB)
     }
     
-    init(
-        playerA: GameViewState.Player = .init(name: "", score: 0),
-        playerB: GameViewState.Player = .init(name: "", score: 0),
-        activePlayer: PlayerPosition = .A,
-        ballOn: BallOn = .red)
-    {
-        self.playerA = playerA
-        self.playerB = playerB
-        self.activePlayer = activePlayer
-        self.ballOn = ballOn
+    struct FrameState {
+        let scoreA: Int
+        let scoreB: Int
+        let activePlayer: PlayerPosition
+        let ballOn: BallOn
     }
     
-    var description: String {
-        """
-            Player A: \(playerA.name) - \(playerA.score)
-            Player B: \(playerB.name) - \(playerB.score)
-            Ball On: \(ballOn)
-        """
+    init(game: Game, frame: Frame) {
+        self.playerA = game.playerOne.name
+        self.playerB = game.playerTwo.name
+        self.frame = .init(scoreA: frame.playerOneScore, scoreB: frame.playerTwoScore, activePlayer: frame.activePlayerPosition, ballOn: frame.ballOn)
     }
 }
 
@@ -87,10 +111,15 @@ class Game: Identifiable {
     var playerOne: Player
     var playerTwo: Player
     private(set) var frames: [Frame]
-    var activeFrame: Frame
+    private(set) var activeFrame: Frame?
+    
+    var decidedFrames: [Frame] { frames.filter { $0.isDecided } }
+    var pendingFrames: [Frame] { frames.filter { !$0.isDecided } }
+    var lastFrame: Frame? { decidedFrames.last }
+    var nextFrame: Frame? { pendingFrames.first }
     
     var activePlayer: Player {
-        activeFrame.activePlayerPosition == .A ? playerOne : playerTwo
+        activeFrame?.activePlayerPosition == .A ? playerOne : playerTwo
     }
     
     var timeline: Timeline = .init()
@@ -107,42 +136,43 @@ class Game: Identifiable {
         }()
         self.playerOne = playerOne
         self.playerTwo = playerTwo
-        self.activeFrame = frames[0]
         timeline.game = self
+    }
+    
+    func startNextFrame() {
+        let activeFrameIndex: Int = {
+            if let active = activeFrame, let index = frames.firstIndex(where: { active.id == $0.id }) {
+                timeline.appendAction(.endFrame(index, frames[index]))
+                return index
+            }
+            return 0
+        }()
+        guard frames.count > activeFrameIndex else { return }
+        let nextFrame = frames[activeFrameIndex]
+        activeFrame = nextFrame
         timeline.appendAction(.beginGame)
-        timeline.appendAction(.startFrame(0, activeFrame))
+        timeline.appendAction(.startFrame(activeFrameIndex, nextFrame))
     }
     
     func perform(_ action: Action) {
         switch action {
         case .switchPlayer:
-            activeFrame.switchPlayer()
+            activeFrame?.switchPlayer()
             timeline.appendAction(.switchActivePlayer)
         case .pot(let ball):
             switch ball {
             case .red:
-                activeFrame.potRed()
+                activeFrame?.potRed()
             default:
-                activeFrame.potColor(ball)
+                activeFrame?.potColor(ball)
             }
             timeline.appendAction(.pot(ball))
         }
-//        print("\(frames.filter{$0.winnerPosition == .A}.count) (\(frames.count)) \(frames.filter{$0.winnerPosition == .B}.count)")
-    }
-    
-    func startNextFrame() -> Bool {
-        guard let activeIndex = frames.firstIndex(where: { $0.id == activeFrame.id }) else { return false }
-        timeline.appendAction(.endFrame(activeIndex, activeFrame))
         
-        guard activeIndex < frames.count - 1 else {
-            timeline.appendAction(.endGame)
-            return false
+        if let frame = activeFrame, frame.isDecided {
+            activeFrame = nil
         }
-        
-        activeFrame = frames[activeIndex + 1]
-        timeline.appendAction(.startFrame(activeIndex + 1, activeFrame))
-        
-        return true
+//        print("\(frames.filter{$0.winnerPosition == .A}.count) (\(frames.count)) \(frames.filter{$0.winnerPosition == .B}.count)")
     }
     
     func reset() {
@@ -169,7 +199,11 @@ class Game: Identifiable {
     }
 }
 
-class Frame: Identifiable, ObservableObject, CustomStringConvertible {
+class Frame: Identifiable, Equatable {
+    static func == (lhs: Frame, rhs: Frame) -> Bool {
+        lhs.id == rhs.id
+    }
+    
     let id: String = UUID.id
     var status: Status = .uninitialized
     

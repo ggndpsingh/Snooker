@@ -2,11 +2,38 @@
 
 import SwiftUI
 
+struct MainView: View {
+    @ObservedObject var viewModel: StateViewModel
+    
+    var body: some View {
+        switch viewModel.state {
+        case .playing(let viewModel):
+            GameView(viewModel: viewModel)
+        case .gameNotStarted:
+            StartGameView(startHandler: viewModel.startGame)
+        default:
+            Text("Nothing")
+        }
+    }
+}
+
+struct StartGameView: View {
+    let startHandler: () -> Void
+    
+    var body: some View {
+        Button(action: {
+            self.startHandler()
+        }) {
+            Text("Start Game")
+        }
+    }
+}
+
 struct GameView: View {
     @ObservedObject var viewModel: GameViewModel
     private var viewState: GameViewState { viewModel.viewState }
     
-    init(viewModel: GameViewModel = .init(game: .testGame)) {
+    init(viewModel: GameViewModel) {
         self.viewModel = viewModel
     }
     
@@ -19,8 +46,8 @@ struct GameView: View {
             Color.secondarySystemBackground
                 .edgesIgnoringSafeArea(.all)
             VStack {
-                PlayersView(playerOne: viewState.playerA, playerTwo: viewState.playerB, activePlayer: viewState.activePlayer)
-                BallsView(ballOn: viewState.ballOn, potAction: { ball in
+                PlayersView(playerOne: viewState.playerAState, playerTwo: viewState.playerBState, activePlayer: viewState.frame.activePlayer)
+                BallsView(ballOn: viewState.frame.ballOn, potAction: { ball in
                     perform(.pot(ball))
                 })
                 
@@ -30,7 +57,8 @@ struct GameView: View {
                     switchPlayerHandler: {
                         perform(.switchPlayer)
                     },
-                    resetHandler: viewModel.reset
+                    resetHandler: viewModel.reset,
+                    nextFrameHandler: viewModel.startNextFrame
                 )
             }
         }
@@ -38,8 +66,8 @@ struct GameView: View {
 }
 
 struct PlayersView: View {
-    @ObservedObject var playerOne: GameViewState.Player
-    @ObservedObject var playerTwo: GameViewState.Player
+    var playerOne: GameViewState.PlayerState
+    var playerTwo: GameViewState.PlayerState
     let activePlayer: PlayerPosition
     
     var body: some View {
@@ -52,7 +80,7 @@ struct PlayersView: View {
 }
 
 struct PlayerView: View {
-    @ObservedObject var player: GameViewState.Player
+    var player: GameViewState.PlayerState
     let isActive: Bool
     
     var body: some View {
@@ -65,7 +93,7 @@ struct PlayerView: View {
     }
     
     struct ScoreView: View {
-        @ObservedObject var player: GameViewState.Player
+        var player: GameViewState.PlayerState
         let isActive: Bool
         
         var body: some View {
@@ -137,6 +165,8 @@ struct BallsView: View {
 struct SwitchPlayerView: View {
     let switchPlayerHandler: () -> Void
     let resetHandler: () -> Void
+    let nextFrameHandler: () -> Void
+
     var body: some View {
         HStack {
             Button(action: resetHandler) {
@@ -161,7 +191,7 @@ struct SwitchPlayerView: View {
             
             Spacer()
             
-            Button(action: {}) {
+            Button(action: nextFrameHandler) {
                 Image(systemName: "arrow.clockwise")
             }
             .frame(width: 60, height: 60, alignment: .center)
@@ -177,7 +207,7 @@ struct SwitchPlayerView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            GameView()
+            MainView(viewModel: .init(game: .testGame))
 //            GameView(game: .testGame)
 //                .previewDevice("iPad Pro (12.9-inch) (4th generation)")
 //                .preferredColorScheme(.dark)
