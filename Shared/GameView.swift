@@ -3,12 +3,12 @@
 import SwiftUI
 
 struct MainView: View {
-    @ObservedObject var viewModel: StateViewModel
+    @ObservedObject var viewModel: GameViewModel
     
     var body: some View {
         switch viewModel.state {
-        case .playing(let viewModel):
-            GameView(viewModel: viewModel)
+        case .playing(let viewState):
+            GameView(viewState: viewState, actionHandler: viewModel.perform, startNextFrameHandler: viewModel.startNextFrame)
         case .gameNotStarted:
             StartGameView(startHandler: viewModel.startGame)
         case .betweenFrames(let last, let next):
@@ -39,22 +39,15 @@ struct BetweenFramesView: View {
     
     var body: some View {
         Button(action: nextFrameHandler) {
-            Text("Start Nxt Frame")
+            Text("Start Next Frame")
         }
     }
 }
 
 struct GameView: View {
-    @ObservedObject var viewModel: GameViewModel
-    private var viewState: GameViewState { viewModel.viewState }
-    
-    init(viewModel: GameViewModel) {
-        self.viewModel = viewModel
-    }
-    
-    func perform(_ action: Game.Action) {
-        viewModel.perform(action)
-    }
+    let viewState: GameViewState
+    let actionHandler: (Game.Action) -> Void
+    let startNextFrameHandler: () -> Void
     
     var body: some View {
         ZStack {
@@ -63,17 +56,16 @@ struct GameView: View {
             VStack {
                 PlayersView(playerOne: viewState.playerAState, playerTwo: viewState.playerBState, activePlayer: viewState.frame.activePlayer)
                 BallsView(ballOn: viewState.frame.ballOn, potAction: { ball in
-                    perform(.pot(ball))
+                    actionHandler(.pot(ball))
                 })
                 
                 Spacer()
                 
                 SwitchPlayerView(
                     switchPlayerHandler: {
-                        perform(.switchPlayer)
+                        actionHandler(.switchPlayer)
                     },
-                    resetHandler: viewModel.reset,
-                    nextFrameHandler: viewModel.startNextFrame
+                    nextFrameHandler: startNextFrameHandler
                 )
             }
         }
@@ -179,12 +171,11 @@ struct BallsView: View {
 
 struct SwitchPlayerView: View {
     let switchPlayerHandler: () -> Void
-    let resetHandler: () -> Void
     let nextFrameHandler: () -> Void
 
     var body: some View {
         HStack {
-            Button(action: resetHandler) {
+            Button(action: {}) {
                 Image(systemName: "arrow.counterclockwise")
             }
             .frame(width: 60, height: 60, alignment: .center)

@@ -21,6 +21,10 @@
 		E628A01724A5F85800F2D747 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = E628A01524A5F85800F2D747 /* Game.swift */; };
 		E628A01A24A5F97C00F2D747 /* UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = E628A01924A5F97C00F2D747 /* UUID.swift */; };
 		E628A01B24A5F97C00F2D747 /* UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = E628A01924A5F97C00F2D747 /* UUID.swift */; };
+		E62A343724C9BFDD0036D845 /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62A343624C9BFDD0036D845 /* Frame.swift */; };
+		E62A343824C9BFDD0036D845 /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62A343624C9BFDD0036D845 /* Frame.swift */; };
+		E62A343D24C9C0710036D845 /* GameViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62A343C24C9C0710036D845 /* GameViewState.swift */; };
+		E62A343E24C9C0710036D845 /* GameViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62A343C24C9C0710036D845 /* GameViewState.swift */; };
 		E637FC8E24B1C7CE00A800EA /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E637FC8D24B1C7CE00A800EA /* Timeline.swift */; };
 		E637FC8F24B1C7CE00A800EA /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E637FC8D24B1C7CE00A800EA /* Timeline.swift */; };
 		E682FFE424A70C6900BBB9C2 /* Ball.swift in Sources */ = {isa = PBXBuildFile; fileRef = E682FFE324A70C6900BBB9C2 /* Ball.swift */; };
@@ -64,6 +68,8 @@
 		E628A01224A5F7C700F2D747 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		E628A01524A5F85800F2D747 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		E628A01924A5F97C00F2D747 /* UUID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UUID.swift; sourceTree = "<group>"; };
+		E62A343624C9BFDD0036D845 /* Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
+		E62A343C24C9C0710036D845 /* GameViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewState.swift; sourceTree = "<group>"; };
 		E637FC8D24B1C7CE00A800EA /* Timeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
 		E682FFE324A70C6900BBB9C2 /* Ball.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ball.swift; sourceTree = "<group>"; };
 		E682FFE624A731D100BBB9C2 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -121,6 +127,7 @@
 				E628A01124A5F7C000F2D747 /* Models */,
 				E628A00B24A5F67500F2D747 /* SnookerApp.swift */,
 				E628A00E24A5F69D00F2D747 /* GameView.swift */,
+				E62A343C24C9C0710036D845 /* GameViewState.swift */,
 				E6289FCA24A5F4F800F2D747 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -177,6 +184,7 @@
 			children = (
 				E628A01224A5F7C700F2D747 /* Player.swift */,
 				E628A01524A5F85800F2D747 /* Game.swift */,
+				E62A343624C9BFDD0036D845 /* Frame.swift */,
 				E637FC8D24B1C7CE00A800EA /* Timeline.swift */,
 				E682FFE324A70C6900BBB9C2 /* Ball.swift */,
 			);
@@ -357,6 +365,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E62A343724C9BFDD0036D845 /* Frame.swift in Sources */,
+				E62A343D24C9C0710036D845 /* GameViewState.swift in Sources */,
 				E637FC8E24B1C7CE00A800EA /* Timeline.swift in Sources */,
 				E682FFE424A70C6900BBB9C2 /* Ball.swift in Sources */,
 				E682FFE724A731D100BBB9C2 /* UIColor.swift in Sources */,
@@ -372,6 +382,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E62A343824C9BFDD0036D845 /* Frame.swift in Sources */,
+				E62A343E24C9C0710036D845 /* GameViewState.swift in Sources */,
 				E637FC8F24B1C7CE00A800EA /* Timeline.swift in Sources */,
 				E682FFE524A70C6900BBB9C2 /* Ball.swift in Sources */,
 				E682FFE824A731D100BBB9C2 /* UIColor.swift in Sources */,
