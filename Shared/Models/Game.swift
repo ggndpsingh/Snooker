@@ -8,17 +8,35 @@ class StateViewModel: ObservableObject {
     
     init(game: Game) {
         self.game = game
+        self.game.updateHandler = updateHandler
     }
     
     func startGame() {
-        game.startNextFrame()
-        guard let frame = game.activeFrame else { return }
-        let viewModel = GameViewModel(game: game, frame: frame)
-        state = .playing(viewModel)
+        guard let _ = game.startNextFrame() else { return }
+        state = .init(game: game)
+    }
+    
+    private func updateHandler() {
+        state = .init(game: game)
     }
 }
 
-enum GameState {
+enum GameState: Equatable {
+    static func == (lhs: GameState, rhs: GameState) -> Bool {
+        switch (lhs, rhs) {
+        case (.gameNotStarted, .gameNotStarted):
+            return true
+        case (.gameOver, .gameOver):
+            return true
+        case (.playing(let gameA), .playing(let gameB)):
+            return gameA.viewState == gameB.viewState
+        case (.betweenFrames(let framesALast, let framesANext), .betweenFrames(let framesBLast, let framesBNext)):
+            return framesALast == framesBLast && framesANext == framesBNext
+        default:
+            return false
+        }
+    }
+    
     case gameNotStarted
     case playing(GameViewModel)
     case betweenFrames(Frame, Frame)
@@ -35,11 +53,13 @@ enum GameState {
             self = .gameOver
         }
     }
+    
+    
 }
 
 class GameViewModel: ObservableObject {
     private var game: Game
-    private let frame: Frame
+    private var frame: Frame
     
     var viewState: GameViewState {
         willSet {
@@ -54,7 +74,10 @@ class GameViewModel: ObservableObject {
     }
     
     func startNextFrame() {
-        game.startNextFrame()
+        guard let frame = game.startNextFrame() else { return }
+        self.frame = frame
+        updateFrameStatus()
+        updateViewState()
     }
     
     func perform(_ action: Game.Action) {
@@ -78,7 +101,13 @@ class GameViewModel: ObservableObject {
     }
 }
 
-class GameViewState {
+class GameViewState: Equatable {
+    static func == (lhs: GameViewState, rhs: GameViewState) -> Bool {
+        lhs.playerAState == rhs.playerAState &&
+        lhs.playerBState == rhs.playerBState &&
+        lhs.frame == rhs.frame
+    }
+    
     typealias PlayerState = (name: String, score: Int)
     private let playerA: String
     private let playerB: String
@@ -92,7 +121,7 @@ class GameViewState {
         (name: playerB, score: frame.scoreB)
     }
     
-    struct FrameState {
+    struct FrameState: Equatable {
         let scoreA: Int
         let scoreB: Int
         let activePlayer: PlayerPosition
@@ -110,6 +139,7 @@ class Game: Identifiable {
     let id: String = UUID.id
     var playerOne: Player
     var playerTwo: Player
+    var updateHandler: (() -> Void)?
     private(set) var frames: [Frame]
     private(set) var activeFrame: Frame?
     
@@ -139,19 +169,14 @@ class Game: Identifiable {
         timeline.game = self
     }
     
-    func startNextFrame() {
-        let activeFrameIndex: Int = {
-            if let active = activeFrame, let index = frames.firstIndex(where: { active.id == $0.id }) {
-                timeline.appendAction(.endFrame(index, frames[index]))
-                return index
-            }
-            return 0
-        }()
-        guard frames.count > activeFrameIndex else { return }
-        let nextFrame = frames[activeFrameIndex]
+    func startNextFrame() -> Frame? {
+        guard !pendingFrames.isEmpty else { return nil }
+        let nextFrame = pendingFrames[0]
+        let nextFrameIndex = frames.firstIndex(of: nextFrame)!
         activeFrame = nextFrame
         timeline.appendAction(.beginGame)
-        timeline.appendAction(.startFrame(activeFrameIndex, nextFrame))
+        timeline.appendAction(.startFrame(nextFrameIndex, nextFrame))
+        return nextFrame
     }
     
     func perform(_ action: Action) {
@@ -172,7 +197,9 @@ class Game: Identifiable {
         if let frame = activeFrame, frame.isDecided {
             activeFrame = nil
         }
-//        print("\(frames.filter{$0.winnerPosition == .A}.count) (\(frames.count)) \(frames.filter{$0.winnerPosition == .B}.count)")
+        print("\(frames.filter{$0.winnerPosition == .A}.count) (\(frames.count)) \(frames.filter{$0.winnerPosition == .B}.count)")
+        
+        updateHandler?()
     }
     
     func reset() {
@@ -236,7 +263,7 @@ class Frame: Identifiable, Equatable {
         }
     }
     
-    var totalReds: Int = 3
+    var totalReds: Int = 1
     var pottedReds: Int = 0
     var lastBallPotted: Ball?
     var remainingReds: Int { totalReds - pottedReds }

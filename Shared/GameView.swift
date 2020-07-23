@@ -11,8 +11,13 @@ struct MainView: View {
             GameView(viewModel: viewModel)
         case .gameNotStarted:
             StartGameView(startHandler: viewModel.startGame)
-        default:
-            Text("Nothing")
+        case .betweenFrames(let last, let next):
+            BetweenFramesView(
+                lastFrame: last,
+                nextFrame: next,
+                nextFrameHandler: viewModel.startGame)
+        case .gameOver:
+            Text("Game Over!")
         }
     }
 }
@@ -21,10 +26,20 @@ struct StartGameView: View {
     let startHandler: () -> Void
     
     var body: some View {
-        Button(action: {
-            self.startHandler()
-        }) {
+        Button(action: startHandler) {
             Text("Start Game")
+        }
+    }
+}
+
+struct BetweenFramesView: View {
+    let lastFrame: Frame
+    let nextFrame: Frame
+    let nextFrameHandler: () -> Void
+    
+    var body: some View {
+        Button(action: nextFrameHandler) {
+            Text("Start Nxt Frame")
         }
     }
 }
