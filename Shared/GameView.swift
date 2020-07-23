@@ -15,7 +15,7 @@ struct MainView: View {
             BetweenFramesView(
                 lastFrame: last,
                 nextFrame: next,
-                nextFrameHandler: viewModel.startGame)
+                nextFrameHandler: viewModel.startNextFrame)
         case .gameOver:
             Text("Game Over!")
         }
