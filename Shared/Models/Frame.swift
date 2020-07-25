@@ -2,18 +2,23 @@
 
 import Foundation
 
-class Frame: Identifiable, Equatable {
-    static func == (lhs: Frame, rhs: Frame) -> Bool {
-        lhs.id == rhs.id
-    }
-    
+class Frame: Identifiable {
     let id: String = UUID.id
-    var totalReds: Int
-    var status: Status = .uninitialized
+    private let totalReds: Int
+    private(set) var status: Status = .uninitialized
     
-    var playerOneScore: Int = 0
-    var playerTwoScore: Int = 0
-    var isScoreTied: Bool { playerOneScore == playerTwoScore }
+    private(set) var playerAScore: Int = 0
+    private(set) var playerBScore: Int = 0
+    
+    private(set) var pottedReds: Int = 0
+    private(set) var lastBallPotted: Ball?
+    private(set) var remainingColors: [Ball] = Ball.colors
+    private(set) var onFinalColors: Bool = false
+    
+    private(set) var activePlayerPosition: PlayerPosition
+    
+    private var remainingReds: Int { totalReds - pottedReds }
+    private var isScoreTied: Bool { playerAScore == playerBScore }
     
     var ballOn: BallOn {
         switch lastBallPotted {
@@ -48,14 +53,6 @@ class Frame: Identifiable, Equatable {
         }
     }
     
-    var pottedReds: Int = 0
-    var lastBallPotted: Ball?
-    var remainingReds: Int { totalReds - pottedReds }
-    var remainingColors: [Ball] = Ball.colors
-    var onFinalColors: Bool = false
-    
-    var activePlayerPosition: PlayerPosition
-    
     init(numberOfReds: Int, toBreak player: PlayerPosition) {
         totalReds = numberOfReds
         self.activePlayerPosition = player
@@ -70,9 +67,18 @@ class Frame: Identifiable, Equatable {
         }
     }
     
+    var isActive: Bool {
+        if case .active = status { return true }
+        return false
+    }
+    
     var isDecided: Bool {
         if case .decided(_) = status { return true }
         return false
+    }
+    
+    func setActive() {
+        status = .active
     }
     
     func switchPlayer() {
@@ -95,38 +101,45 @@ class Frame: Identifiable, Equatable {
         pot(ball)
     }
     
-    func pot(_ ball: Ball) {
+    private func pot(_ ball: Ball) {
         lastBallPotted = ball
         switch activePlayerPosition {
         case .A:
-            playerOneScore += ball.points
+            playerAScore += ball.points
         case .B:
-            playerTwoScore += ball.points
+            playerBScore += ball.points
         }
         setDecided()
     }
     
-    func setDecided() {
+    private func setDecided() {
         guard ballOn == .none else { return }
-        status = .decided(playerOneScore > playerTwoScore ? .A : .B)
+        status = .decided(playerAScore > playerBScore ? .A : .B)
     }
     
     var description: String {
         """
             Remaining Reds: \(remainingReds)
             Remaining Colors: \(remainingColors.map{ $0.description })
-            Scores: \(playerOneScore) - \(playerTwoScore)
+            Scores: \(playerAScore) - \(playerBScore)
             On Final Colors: \(onFinalColors)
         """
-    }
-    
-    func logDetails() {
-        print(description)
     }
     
     enum Status {
         case uninitialized
         case decided(PlayerPosition)
-        case current
+        case active
     }
+}
+
+extension Frame: Equatable {
+    static func == (lhs: Frame, rhs: Frame) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+extension Array where Element == Frame {
+    var decided: Self { filter { $0.isDecided && !$0.isActive } }
+    var pending: Self { filter { !$0.isDecided && !$0.isActive } }
 }

@@ -15,7 +15,8 @@ struct StartGameView: View {
     @State private var isPresentingGameView: Bool = false
     
     func makeGame() -> Game {
-        Game(numberOfReds: Int(numberOfReds), framesCount: numberOfFrames, playerOne: .init(name: playerAName), playerTwo: .init(name: playerBName))
+        .testGame
+//        Game(numberOfReds: Int(numberOfReds), framesCount: numberOfFrames, playerA: .init(name: playerAName), playerB: .init(name: playerBName))
     }
     
     var body: some View {
@@ -66,7 +67,7 @@ struct StartGameView: View {
                 trailing: Button("Start") {
                     self.isPresentingGameView.toggle()
                 }
-                .disabled(!canStart)
+//                .disabled(!canStart)
             )
         }
         .fullScreenCover(isPresented: $isPresentingGameView, content: {

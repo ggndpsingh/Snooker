@@ -33,6 +33,12 @@
 		E682FFE524A70C6900BBB9C2 /* Ball.swift in Sources */ = {isa = PBXBuildFile; fileRef = E682FFE324A70C6900BBB9C2 /* Ball.swift */; };
 		E682FFE724A731D100BBB9C2 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E682FFE624A731D100BBB9C2 /* UIColor.swift */; };
 		E682FFE824A731D100BBB9C2 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E682FFE624A731D100BBB9C2 /* UIColor.swift */; };
+		E6D5CBFF24CBFE0B006725F8 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D5CBFE24CBFE0B006725F8 /* GameViewModel.swift */; };
+		E6D5CC0024CBFE0B006725F8 /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D5CBFE24CBFE0B006725F8 /* GameViewModel.swift */; };
+		E6D5CC0224CBFE25006725F8 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D5CC0124CBFE25006725F8 /* GameState.swift */; };
+		E6D5CC0324CBFE25006725F8 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D5CC0124CBFE25006725F8 /* GameState.swift */; };
+		E6D5CC0524CC0C2D006725F8 /* PlayersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D5CC0424CC0C2D006725F8 /* PlayersView.swift */; };
+		E6D5CC0624CC0C2D006725F8 /* PlayersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D5CC0424CC0C2D006725F8 /* PlayersView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +82,9 @@
 		E675E34724CABB1D008A9790 /* StartGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartGameView.swift; sourceTree = "<group>"; };
 		E682FFE324A70C6900BBB9C2 /* Ball.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ball.swift; sourceTree = "<group>"; };
 		E682FFE624A731D100BBB9C2 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		E6D5CBFE24CBFE0B006725F8 /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
+		E6D5CC0124CBFE25006725F8 /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
+		E6D5CC0424CC0C2D006725F8 /* PlayersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayersView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,8 +138,11 @@
 				E628A01824A5F97600F2D747 /* Extensions */,
 				E628A01124A5F7C000F2D747 /* Models */,
 				E628A00B24A5F67500F2D747 /* SnookerApp.swift */,
+				E6D5CC0124CBFE25006725F8 /* GameState.swift */,
 				E628A00E24A5F69D00F2D747 /* GameView.swift */,
+				E6D5CC0424CC0C2D006725F8 /* PlayersView.swift */,
 				E675E34724CABB1D008A9790 /* StartGameView.swift */,
+				E6D5CBFE24CBFE0B006725F8 /* GameViewModel.swift */,
 				E62A343C24C9C0710036D845 /* GameViewState.swift */,
 				E6289FCA24A5F4F800F2D747 /* Assets.xcassets */,
 			);
@@ -369,9 +381,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6D5CBFF24CBFE0B006725F8 /* GameViewModel.swift in Sources */,
 				E62A343724C9BFDD0036D845 /* Frame.swift in Sources */,
+				E6D5CC0224CBFE25006725F8 /* GameState.swift in Sources */,
 				E62A343D24C9C0710036D845 /* GameViewState.swift in Sources */,
 				E637FC8E24B1C7CE00A800EA /* Timeline.swift in Sources */,
+				E6D5CC0524CC0C2D006725F8 /* PlayersView.swift in Sources */,
 				E682FFE424A70C6900BBB9C2 /* Ball.swift in Sources */,
 				E682FFE724A731D100BBB9C2 /* UIColor.swift in Sources */,
 				E628A00F24A5F69D00F2D747 /* GameView.swift in Sources */,
@@ -387,9 +402,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6D5CC0024CBFE0B006725F8 /* GameViewModel.swift in Sources */,
 				E62A343824C9BFDD0036D845 /* Frame.swift in Sources */,
+				E6D5CC0324CBFE25006725F8 /* GameState.swift in Sources */,
 				E62A343E24C9C0710036D845 /* GameViewState.swift in Sources */,
 				E637FC8F24B1C7CE00A800EA /* Timeline.swift in Sources */,
+				E6D5CC0624CC0C2D006725F8 /* PlayersView.swift in Sources */,
 				E682FFE524A70C6900BBB9C2 /* Ball.swift in Sources */,
 				E682FFE824A731D100BBB9C2 /* UIColor.swift in Sources */,
 				E628A01024A5F69D00F2D747 /* GameView.swift in Sources */,

@@ -13,9 +13,9 @@ struct MainView: View {
             switch viewModel.state {
             case .playing(let viewState):
                 GameView(viewState: viewState, actionHandler: viewModel.perform, startNextFrameHandler: viewModel.startNextFrame)
-            case .betweenFrames(let last, _):
+            case .betweenFrames(let viewState):
                 BetweenFramesView(
-                    state: .init(game: viewModel.game, frame: last),
+                    state: viewState,
                     nextFrameHandler: viewModel.startNextFrame)
             case .gameOver:
                 Text("Game Over!")
@@ -25,17 +25,17 @@ struct MainView: View {
 }
 
 struct BetweenFramesView: View {
-    let state: GameViewState
+    let state: FrameResultViewState
     let nextFrameHandler: () -> Void
     
     var body: some View {
         VStack {
             Text("Winner")
                 .font(.subheadline)
-            Text(state.winner!.name)
+            Text(state.winner.name)
                 .font(.largeTitle)
             
-            Text("\(state.playerAState.score) - \(state.playerBState.score)")
+            Text("\(state.playerA.score) - \(state.playerB.score)")
                 .font(.largeTitle)
             
             Button(action: nextFrameHandler) {
@@ -59,8 +59,8 @@ struct GameView: View {
     var body: some View {
         ZStack {
             VStack {
-                PlayersView(playerOne: viewState.playerAState, playerTwo: viewState.playerBState, activePlayer: viewState.frame.activePlayer)
-                BallsView(ballOn: viewState.frame.ballOn, potAction: { ball in
+                PlayersView(viewState: viewState)
+                BallsView(ballOn: viewState.ballOn, potAction: { ball in
                     actionHandler(.pot(ball))
                 })
                 
@@ -73,53 +73,6 @@ struct GameView: View {
                     nextFrameHandler: startNextFrameHandler
                 )
             }
-        }
-    }
-}
-
-struct PlayersView: View {
-    var playerOne: GameViewState.PlayerState
-    var playerTwo: GameViewState.PlayerState
-    let activePlayer: PlayerPosition
-    
-    var body: some View {
-        HStack() {
-            PlayerView(player: playerOne, isActive: activePlayer == .A)
-            Spacer()
-            PlayerView(player: playerTwo, isActive: activePlayer == .B)
-        }
-    }
-}
-
-struct PlayerView: View {
-    var player: GameViewState.PlayerState
-    let isActive: Bool
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            Text(player.name)
-                .font(Font.system(size: 14, weight: .medium, design: .rounded))
-            ScoreView(player: player, isActive: isActive)
-        }
-        .padding()
-    }
-    
-    struct ScoreView: View {
-        var player: GameViewState.PlayerState
-        let isActive: Bool
-        
-        var body: some View {
-            Text("\(player.score)")
-                .font(Font.system(size: 32, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
-                .frame(width: 100, height: 100)
-                .background(background)
-                .clipShape(
-                    RoundedRectangle(cornerRadius: 12, style:.continuous))
-        }
-        
-        private var background: Color {
-            isActive ? .green : .gray
         }
     }
 }
