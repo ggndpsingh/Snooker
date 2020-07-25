@@ -3,17 +3,14 @@
 import SwiftUI
 
 class GameViewModel: ObservableObject {
-    @Published var state: GameState = .gameNotStarted
+    @Published var state: GameState
     let game: Game
     
     init(game: Game) {
         self.game = game
+        self.state = .init(game: game)
         self.game.updateHandler = updateHandler
-    }
-    
-    func startGame() {
-        game.startNextFrame()
-        state = .init(game: game)
+        self.game.startNextFrame()
     }
     
     func startNextFrame() {
@@ -30,7 +27,6 @@ class GameViewModel: ObservableObject {
 }
 
 enum GameState: Equatable {
-    case gameNotStarted
     case playing(GameViewState)
     case betweenFrames(Frame, Frame)
     case gameOver
@@ -38,8 +34,6 @@ enum GameState: Equatable {
     init(game: Game) {
         if let frame = game.activeFrame {
             self = .playing(.init(game: game, frame: frame))
-        } else if game.decidedFrames.isEmpty {
-            self = .gameNotStarted
         } else if game.activeFrame == nil, let last = game.lastFrame, let next = game.nextFrame {
             self = .betweenFrames(last, next)
         } else {
@@ -49,8 +43,6 @@ enum GameState: Equatable {
     
     static func == (lhs: GameState, rhs: GameState) -> Bool {
         switch (lhs, rhs) {
-        case (.gameNotStarted, .gameNotStarted):
-            return true
         case (.gameOver, .gameOver):
             return true
         case (.playing(let gameA), .playing(let gameB)):
@@ -67,6 +59,7 @@ class Game: Identifiable {
     let id: String = UUID.id
     var playerOne: Player
     var playerTwo: Player
+    
     var updateHandler: (() -> Void)?
     private(set) var frames: [Frame]
     private(set) var activeFrame: Frame?
@@ -82,13 +75,13 @@ class Game: Identifiable {
     
     var timeline: Timeline = .init()
     
-    internal init(framesCount: Int, playerOne: Player, playerTwo: Player) {
+    init(numberOfReds: Int, framesCount: Int, playerOne: Player, playerTwo: Player) {
         self.frames = {
             var frames: [Frame] = []
             let count = max (framesCount, 1)
             for i in 0..<count {
                 let toBreak: PlayerPosition = i.isMultiple(of: 2) ? .A : .B
-                frames.append(.init(toBreak: toBreak))
+                frames.append(.init(numberOfReds: numberOfReds, toBreak: toBreak))
             }
             return frames
         }()
@@ -102,8 +95,11 @@ class Game: Identifiable {
         let nextFrame = pendingFrames[0]
         let nextFrameIndex = frames.firstIndex(of: nextFrame)!
         activeFrame = nextFrame
-        timeline.appendAction(.beginGame)
+        if nextFrameIndex == 0 {
+            timeline.appendAction(.beginGame)
+        }
         timeline.appendAction(.startFrame(nextFrameIndex, nextFrame))
+        updateHandler?()
     }
     
     func perform(_ action: Action) {
@@ -141,14 +137,11 @@ class Game: Identifiable {
 
 extension Game {
     static let testGame: Game = .init(
+        numberOfReds: 1,
         framesCount: 3,
         playerOne: .init(
-            id: UUID.id,
-            name: "Gagandeep",
-            score: 0),
+            name: "Gagandeep"),
         playerTwo: .init(
-            id: UUID.id,
-            name: "Omkar",
-            score: 0)
+            name: "Omkar")
     )
 }

@@ -6,41 +6,48 @@ struct MainView: View {
     @ObservedObject var viewModel: GameViewModel
     
     var body: some View {
-        switch viewModel.state {
-        case .playing(let viewState):
-            GameView(viewState: viewState, actionHandler: viewModel.perform, startNextFrameHandler: viewModel.startNextFrame)
-        case .gameNotStarted:
-            StartGameView(startHandler: viewModel.startGame)
-        case .betweenFrames(let last, let next):
-            BetweenFramesView(
-                lastFrame: last,
-                nextFrame: next,
-                nextFrameHandler: viewModel.startNextFrame)
-        case .gameOver:
-            Text("Game Over!")
-        }
-    }
-}
-
-struct StartGameView: View {
-    let startHandler: () -> Void
-    
-    var body: some View {
-        Button(action: startHandler) {
-            Text("Start Game")
+        ZStack {
+            AngularGradient(gradient: Gradient(colors: [.red, .yellow, .green, .blue, .pink]), center: .center)
+                .edgesIgnoringSafeArea(.all)
+            
+            switch viewModel.state {
+            case .playing(let viewState):
+                GameView(viewState: viewState, actionHandler: viewModel.perform, startNextFrameHandler: viewModel.startNextFrame)
+            case .betweenFrames(let last, _):
+                BetweenFramesView(
+                    state: .init(game: viewModel.game, frame: last),
+                    nextFrameHandler: viewModel.startNextFrame)
+            case .gameOver:
+                Text("Game Over!")
+            }
         }
     }
 }
 
 struct BetweenFramesView: View {
-    let lastFrame: Frame
-    let nextFrame: Frame
+    let state: GameViewState
     let nextFrameHandler: () -> Void
     
     var body: some View {
-        Button(action: nextFrameHandler) {
-            Text("Start Next Frame")
+        VStack {
+            Text("Winner")
+                .font(.subheadline)
+            Text(state.winner!.name)
+                .font(.largeTitle)
+            
+            Text("\(state.playerAState.score) - \(state.playerBState.score)")
+                .font(.largeTitle)
+            
+            Button(action: nextFrameHandler) {
+                Text("Start Next Frame")
+                    .font(.subheadline)
+                    .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+            }
         }
+        .padding()
     }
 }
 
@@ -51,8 +58,6 @@ struct GameView: View {
     
     var body: some View {
         ZStack {
-            Color.secondarySystemBackground
-                .edgesIgnoringSafeArea(.all)
             VStack {
                 PlayersView(playerOne: viewState.playerAState, playerTwo: viewState.playerBState, activePlayer: viewState.frame.activePlayer)
                 BallsView(ballOn: viewState.frame.ballOn, potAction: { ball in

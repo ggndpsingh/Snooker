@@ -8,20 +8,25 @@ class Frame: Identifiable, Equatable {
     }
     
     let id: String = UUID.id
+    var totalReds: Int
     var status: Status = .uninitialized
     
     var playerOneScore: Int = 0
     var playerTwoScore: Int = 0
+    var isScoreTied: Bool { playerOneScore == playerTwoScore }
+    
     var ballOn: BallOn {
         switch lastBallPotted {
-            case .none:
-                if remainingReds > 0 {
-                    return .red
-                } else if onFinalColors {
-                    return .color(remainingColors[0])
-                } else {
-                    return .colors
-                }
+        case .none:
+            if remainingReds > 0 {
+                return .red
+            } else if onFinalColors {
+                if remainingColors.isEmpty && isScoreTied { return .color(.black) }
+                return .color(remainingColors[0])
+            } else {
+                return .colors
+            }
+            
         case .some(let ball):
             if ball == .red {
                 return .colors
@@ -35,11 +40,14 @@ class Frame: Identifiable, Equatable {
                 return .color(remainingColors[0])
             }
             
+            if isScoreTied {
+                return .color(.black)
+            }
+            
             return .none
         }
     }
     
-    var totalReds: Int = 1
     var pottedReds: Int = 0
     var lastBallPotted: Ball?
     var remainingReds: Int { totalReds - pottedReds }
@@ -48,7 +56,8 @@ class Frame: Identifiable, Equatable {
     
     var activePlayerPosition: PlayerPosition
     
-    init(toBreak player: PlayerPosition) {
+    init(numberOfReds: Int, toBreak player: PlayerPosition) {
+        totalReds = numberOfReds
         self.activePlayerPosition = player
     }
     
@@ -78,7 +87,7 @@ class Frame: Identifiable, Equatable {
     }
     
     func potColor(_ ball: Ball) {
-        if onFinalColors {
+        if onFinalColors && !remainingColors.isEmpty {
             remainingColors.removeFirst()
         }
         

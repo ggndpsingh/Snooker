@@ -3,11 +3,10 @@
 import SwiftUI
 
 class Player: Identifiable {
-    let id: String
+    let id: String = UUID().uuidString
     let name: String
     
-    internal init(id: String, name: String, score: Int = 0) {
-        self.id = id
+    internal init(name: String) {
         self.name = name
     }
 }
