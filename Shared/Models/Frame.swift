@@ -10,14 +10,25 @@ class Frame: Identifiable {
     private(set) var playerAScore: Int = 0
     private(set) var playerBScore: Int = 0
     
+    var activePlayerScore: Int {
+        activePlayerPosition == .A ? playerAScore : playerBScore
+    }
+    
+    var otherPlayerScore: Int {
+        activePlayerPosition == .A ? playerBScore : playerAScore
+    }
+    
     private(set) var pottedReds: Int = 0
     private(set) var lastBallPotted: Ball?
     private(set) var remainingColors: [Ball] = Ball.colors
     private(set) var onFinalColors: Bool = false
+    var pointsOnTheTable: Int {
+        (remainingReds * 8) + availableColorPoints
+    }
     
     private(set) var activePlayerPosition: PlayerPosition
     
-    private var remainingReds: Int { totalReds - pottedReds }
+    var remainingReds: Int { totalReds - pottedReds }
     private var isScoreTied: Bool { playerAScore == playerBScore }
     
     var ballOn: BallOn {
@@ -130,6 +141,17 @@ class Frame: Identifiable {
         case uninitialized
         case decided(PlayerPosition)
         case active
+    }
+}
+
+extension Frame {
+    var availableColorPoints: Int {
+        remainingColors.reduce(into: 0) { $0 += $1.points }
+    }
+    
+    var possibleTotalForActivePlayer: Int {
+        let points = activePlayerScore + pointsOnTheTable
+        return lastBallPotted == .red ? points - 1 : points
     }
 }
 

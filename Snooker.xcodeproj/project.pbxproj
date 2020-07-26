@@ -39,6 +39,8 @@
 		E6D5CC0324CBFE25006725F8 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D5CC0124CBFE25006725F8 /* GameState.swift */; };
 		E6D5CC0524CC0C2D006725F8 /* PlayersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D5CC0424CC0C2D006725F8 /* PlayersView.swift */; };
 		E6D5CC0624CC0C2D006725F8 /* PlayersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D5CC0424CC0C2D006725F8 /* PlayersView.swift */; };
+		E6D5CC0824CC10BA006725F8 /* AvailablePointsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D5CC0724CC10BA006725F8 /* AvailablePointsView.swift */; };
+		E6D5CC0924CC10BA006725F8 /* AvailablePointsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D5CC0724CC10BA006725F8 /* AvailablePointsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +87,7 @@
 		E6D5CBFE24CBFE0B006725F8 /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
 		E6D5CC0124CBFE25006725F8 /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
 		E6D5CC0424CC0C2D006725F8 /* PlayersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayersView.swift; sourceTree = "<group>"; };
+		E6D5CC0724CC10BA006725F8 /* AvailablePointsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailablePointsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +143,7 @@
 				E628A00B24A5F67500F2D747 /* SnookerApp.swift */,
 				E6D5CC0124CBFE25006725F8 /* GameState.swift */,
 				E628A00E24A5F69D00F2D747 /* GameView.swift */,
+				E6D5CC0724CC10BA006725F8 /* AvailablePointsView.swift */,
 				E6D5CC0424CC0C2D006725F8 /* PlayersView.swift */,
 				E675E34724CABB1D008A9790 /* StartGameView.swift */,
 				E6D5CBFE24CBFE0B006725F8 /* GameViewModel.swift */,
@@ -391,6 +395,7 @@
 				E682FFE724A731D100BBB9C2 /* UIColor.swift in Sources */,
 				E628A00F24A5F69D00F2D747 /* GameView.swift in Sources */,
 				E628A01A24A5F97C00F2D747 /* UUID.swift in Sources */,
+				E6D5CC0824CC10BA006725F8 /* AvailablePointsView.swift in Sources */,
 				E628A01324A5F7C700F2D747 /* Player.swift in Sources */,
 				E628A00C24A5F67500F2D747 /* SnookerApp.swift in Sources */,
 				E628A01624A5F85800F2D747 /* Game.swift in Sources */,
@@ -412,6 +417,7 @@
 				E682FFE824A731D100BBB9C2 /* UIColor.swift in Sources */,
 				E628A01024A5F69D00F2D747 /* GameView.swift in Sources */,
 				E628A01B24A5F97C00F2D747 /* UUID.swift in Sources */,
+				E6D5CC0924CC10BA006725F8 /* AvailablePointsView.swift in Sources */,
 				E628A01424A5F7C700F2D747 /* Player.swift in Sources */,
 				E628A00D24A5F67500F2D747 /* SnookerApp.swift in Sources */,
 				E628A01724A5F85800F2D747 /* Game.swift in Sources */,

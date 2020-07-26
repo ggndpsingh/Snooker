@@ -64,6 +64,8 @@ struct GameView: View {
                     actionHandler(.pot(ball))
                 })
                 
+                AvailablePointsView(viewState: viewState.toWinViewState)
+                
                 Spacer()
                 
                 SwitchPlayerView(

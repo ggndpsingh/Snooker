@@ -71,3 +71,11 @@ enum BallOn: Equatable {
         }
     }
 }
+
+extension Array where Element == Ball {
+    var totalPoints: Int {
+        self.reduce(into: 0) {
+            $0 += $1.points
+        }
+    }
+}

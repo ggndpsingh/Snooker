@@ -86,7 +86,7 @@ extension Game{
 
 extension Game {
     static let testGame: Game = .init(
-        numberOfReds: 1,
+        numberOfReds: 15,
         framesCount: 3,
         playerA: .init(
             name: "Gagandeep"),

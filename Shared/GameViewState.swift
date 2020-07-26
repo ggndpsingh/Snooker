@@ -11,6 +11,7 @@ class GameViewState {
     let frames: FramesState
     let activePlayer: PlayerPosition
     let ballOn: BallOn
+    let toWinViewState: AvailablePointsViewState
     
     init(game: Game, frame: Frame) {
         playerA = (name: game.playerA.name, frame.playerAScore)
@@ -18,6 +19,7 @@ class GameViewState {
         frames = (game.framesWonByPlayerA.count, game.framesWonByPlayerB.count, game.frames.count)
         activePlayer = frame.activePlayerPosition
         ballOn = frame.ballOn
+        toWinViewState = .init(frame: frame)
     }
 }
 
