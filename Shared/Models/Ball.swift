@@ -52,6 +52,10 @@ extension Ball {
     }
 }
 
+extension Ball: Identifiable {
+    var id: String { UUID().uuidString }
+}
+
 enum BallOn: Equatable {
     case none
     case red

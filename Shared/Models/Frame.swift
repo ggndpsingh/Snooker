@@ -2,6 +2,8 @@
 
 import Foundation
 
+typealias Break = [Ball]
+
 class Frame: Identifiable {
     let id: String = UUID.id
     private let totalReds: Int
@@ -9,6 +11,7 @@ class Frame: Identifiable {
     
     private(set) var playerAScore: Int = 0
     private(set) var playerBScore: Int = 0
+    private(set) var breaks: ([Break], [Break]) = ([], [])
     
     var activePlayerScore: Int {
         activePlayerPosition == .A ? playerAScore : playerBScore
@@ -30,6 +33,14 @@ class Frame: Identifiable {
     
     var remainingReds: Int { totalReds - pottedReds }
     private var isScoreTied: Bool { playerAScore == playerBScore }
+    var currentBreak: Break {
+        switch activePlayerPosition {
+        case .A:
+            return breaks.0.last ?? []
+        case .B:
+            return breaks.1.last ?? []
+        }
+    }
     
     var ballOn: BallOn {
         switch lastBallPotted {
@@ -67,6 +78,7 @@ class Frame: Identifiable {
     init(numberOfReds: Int, toBreak player: PlayerPosition) {
         totalReds = numberOfReds
         self.activePlayerPosition = player
+        startNewBreak(forPlayerAt: player)
     }
     
     var winnerPosition: PlayerPosition? {
@@ -96,6 +108,7 @@ class Frame: Identifiable {
         lastBallPotted = nil
         activePlayerPosition.toggle()
         onFinalColors = remainingReds == 0
+        startNewBreak(forPlayerAt: activePlayerPosition)
     }
     
     func potRed() {
@@ -121,6 +134,31 @@ class Frame: Identifiable {
             playerBScore += ball.points
         }
         setDecided()
+        appendBallToBreak(ball)
+    }
+    
+    private func startNewBreak(forPlayerAt position: PlayerPosition) {
+        var playerBreaks = position == .A ? breaks.0 : breaks.1
+        playerBreaks.append([])
+        switch activePlayerPosition {
+        case .A:
+            breaks.0 = playerBreaks
+        case .B:
+            breaks.1 = playerBreaks
+        }
+    }
+    
+    private func appendBallToBreak(_ ball: Ball) {
+        var playerBreaks = activePlayerPosition == .A ? breaks.0 : breaks.1
+        var currentBreak = playerBreaks.popLast() ?? []
+        currentBreak.append(ball)
+        playerBreaks.append(currentBreak)
+        switch activePlayerPosition {
+        case .A:
+            breaks.0 = playerBreaks
+        case .B:
+            breaks.1 = playerBreaks
+        }
     }
     
     private func setDecided() {

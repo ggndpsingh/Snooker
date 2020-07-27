@@ -27,19 +27,16 @@ struct AvailablePointsView: View {
                 Text("Points on the table: \(viewState.pointsOnTheTable)")
                 Text(differenceText)
                 Text("\(points) to win")
-                HStack(spacing: 3) {
-                    ForEach(sequence, id: \.self) { ball in
-                        Circle()
-                            .fill(ball.color)
-                            .frame(width: 16, height: 16)
-                            .shadow(color: Color/*@START_MENU_TOKEN@*/.black/*@END_MENU_TOKEN@*/.opacity(0.4), radius: 2, x: 1, y: 1)
-                            .overlay(
-                                Circle()
-                                    .fill(RadialGradient(gradient: Gradient(colors: [.white, ball.color]), center: .init(x: 0.3, y: 0.2), startRadius: 1, endRadius: 15))
-                                    .opacity(0.5))
+                VStack {
+                    Text("Sequence to win").font(.subheadline)
+                    HStack(spacing: 3) {
+                        ForEach(sequence, id: \.self) { ball in
+                            BallSphereView(ball: ball)
+                        }
                     }
                 }
-                .padding(10)
+                
+                BreakGridView(viewState.currentBreak)
             }
         case .snookers(let snookers):
             Text("\(snookers) Snookers required")
@@ -49,15 +46,111 @@ struct AvailablePointsView: View {
     }
 }
 
+struct BreakGridView: View {
+    let currentBreak: Break
+    private let size: BallSphereView.Size = .large
+    
+    init(_ currentBreak: Break) {
+        self.currentBreak = currentBreak
+    }
+    
+    private var condencedBreak: [(key: Ball, value: Int)] {
+        currentBreak.condenced
+            .sorted { $0.key.points < $1.key.points }
+    }
+    
+    private func columns() -> [GridItem] {
+        return [GridItem(.adaptive(minimum: size.rawValue, maximum: size.rawValue))]
+    }
+    
+    var body: some View {
+        VStack {
+            Text("Current Break: \(currentBreak.totalPoints)").font(.subheadline)
+            LazyVGrid(columns: columns(), alignment: .center, spacing: size.spacing) {
+                ForEach(condencedBreak, id: \.key) { (ball, pots) in
+                    BallSphereView(ball: ball, size: size, potCount: pots)
+                }
+            }
+        }.padding()
+    }
+}
+
+struct BallSphereView: View {
+    let ball: Ball
+    let size: Size
+    let potCount: Int?
+    
+    init(ball: Ball, size: BallSphereView.Size = .small, potCount: Int? = nil) {
+        self.ball = ball
+        self.size = size
+        self.potCount = potCount
+    }
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(ball.color)
+                .frame(width: size.rawValue, height: size.rawValue)
+                .shadow(color: Color.black.opacity(0.4), radius: size.shadowRadius, x: 1, y: 1)
+                .overlay(
+                    Circle()
+                        .fill(RadialGradient(gradient: Gradient(colors: [.white, ball.color]), center: .init(x: 0.3, y: 0.2), startRadius: size.gradientRadius.start, endRadius:size.gradientRadius.end))
+                        .opacity(0.5))
+            
+            if let count = potCount {
+                Text("\(count)")
+                    .foregroundColor(.white)
+                    .font(size.font)
+            }
+        }
+    }
+    
+    enum Size: CGFloat {
+        case small = 16, medium = 24, large = 48
+        var spacing: CGFloat {
+            switch self {
+            case .small: return 4
+            case .medium: return 6
+            case .large: return 8
+            }
+        }
+        
+        var font: Font {
+            switch self {
+            case .small: return .footnote
+            case .medium: return .caption
+            case .large: return .title2
+            }
+        }
+        
+        var shadowRadius: CGFloat {
+            switch self {
+            case .small: return 2
+            case .medium: return 3
+            case .large: return 4
+            }
+        }
+        
+        var gradientRadius: (start: CGFloat, end: CGFloat) {
+            switch self {
+            case .small: return (1, 12)
+            case .medium: return (2, 20)
+            case .large: return (4, 36)
+            }
+        }
+    }
+}
+
 struct AvailablePointsViewState {
     let difference: Int
     let pointsOnTheTable: Int
-    
     let state: ToWinState
+    let currentBreak: Break
     
     init(frame: Frame) {
         difference = frame.activePlayerScore - frame.otherPlayerScore
         pointsOnTheTable = frame.pointsOnTheTable
+        currentBreak = frame.currentBreak
         
         let sequence = Self.winningSequence(for: frame)
         if frame.activePlayerScore > sequence.0 {
@@ -136,5 +229,14 @@ struct AvailablePointsViewState {
 struct AvailablePointsView_Previews: PreviewProvider {
     static var previews: some View {
         AvailablePointsView(viewState: .init(frame: AvailablePointsViewState.makeFrame()))
+    }
+}
+
+
+private extension Break {
+    var condenced: [Ball: Int] {
+        self.reduce(into: [Ball: Int]()) {
+            $0[$1] = $0[$1, default: 0] + 1
+        }
     }
 }
