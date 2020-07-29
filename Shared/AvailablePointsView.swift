@@ -20,24 +20,62 @@ struct AvailablePointsView: View {
         }
     }
     
+    func calculateWinningYPositionFor(winningScore: Int, max: Int, height: CGFloat) -> CGFloat {
+        let percentage = CGFloat(winningScore) / CGFloat(max) * 100
+        return CGFloat(percentage) * height / 100
+    }
+    
     var body: some View {
         switch viewState.state {
         case .points(let points, let sequence):
-            VStack {
-                Text("Points on the table: \(viewState.pointsOnTheTable)")
-                Text(differenceText)
-                Text("\(points) to win")
-                VStack {
-                    Text("Sequence to win").font(.subheadline)
-                    HStack(spacing: 3) {
-                        ForEach(sequence, id: \.self) { ball in
-                            BallSphereView(ball: ball)
+            HStack {
+                VStack(spacing: 0) {
+                    VStack(spacing: 0) {
+                        Text("\(viewState.maxPossbileScore)")
+                            .frame(width: 36, height: 36, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            .background(Color.yellow)
+                            .foregroundColor(.white)
+                            .font(.headline)
+                        GeometryReader { geometry in
+                            ZStack {
+                                Rectangle()
+                                    .fill(Color.green)
+                                    .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+                                
+                                Rectangle()
+                                    .frame(width: geometry.size.width, height: 1, alignment: .center)
+                                    .position(x: 18, y: calculateWinningYPositionFor(winningScore: points, max: viewState.maxPossbileScore, height: geometry.size.height))
+                            }
+                            
                         }
+                        Text("\(viewState.currentBreak.totalPoints)")
+                            .frame(width: 36, height: 36, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            .background(Color.yellow)
+                            .foregroundColor(.white)
+                            .font(.headline)
                     }
                 }
+                .frame(minWidth: 36, idealWidth: 36, maxWidth: 36, maxHeight: .infinity)
+                .cornerRadius(4)
                 
-                BreakGridView(viewState.currentBreak)
+                VStack {
+                    Text("Points on the table: \(viewState.pointsOnTheTable)")
+                    Text(differenceText)
+                    Text("\(points) to win")
+                    VStack {
+                        Text("Sequence to win").font(.subheadline)
+                        HStack(spacing: 3) {
+                            ForEach(sequence, id: \.self) { ball in
+                                BallSphereView(ball: ball)
+                            }
+                        }
+                    }
+                    
+                    BreakGridView(viewState.currentBreak)
+                }
             }
+            .padding()
+            .frame(maxHeight: .infinity)
         case .snookers(let snookers):
             Text("\(snookers) Snookers required")
         default:
@@ -106,7 +144,7 @@ struct BallSphereView: View {
     }
     
     enum Size: CGFloat {
-        case small = 16, medium = 24, large = 48
+        case small = 16, medium = 36, large = 48
         var spacing: CGFloat {
             switch self {
             case .small: return 4
@@ -144,12 +182,14 @@ struct BallSphereView: View {
 struct AvailablePointsViewState {
     let difference: Int
     let pointsOnTheTable: Int
+    let maxPossbileScore: Int
     let state: ToWinState
     let currentBreak: Break
     
     init(frame: Frame) {
         difference = frame.activePlayerScore - frame.otherPlayerScore
         pointsOnTheTable = frame.pointsOnTheTable
+        maxPossbileScore = frame.possibleTotalForActivePlayer
         currentBreak = frame.currentBreak
         
         let sequence = Self.winningSequence(for: frame)
@@ -217,10 +257,16 @@ struct AvailablePointsViewState {
     static func makeFrame() -> Frame {
         let frame = Frame(numberOfReds: 15, toBreak: .A)
         
-        for _ in 1...6 {
+        for _ in 1...5 {
             frame.potRed()
             frame.potColor(.black)
         }
+        
+        frame.potRed()
+        frame.potColor(.yellow)
+        frame.potRed()
+        frame.potColor(.blue)
+        frame.potRed()
         return frame
     }
 }

@@ -2,13 +2,24 @@
 
 import SwiftUI
 
+struct Blur: UIViewRepresentable {
+    var style: UIBlurEffect.Style
+    
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        return UIVisualEffectView(effect: UIBlurEffect(style: style))
+    }
+    
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
+        uiView.effect = UIBlurEffect(style: style)
+    }
+}
+
 struct MainView: View {
     @ObservedObject var viewModel: GameViewModel
     
     var body: some View {
         ZStack {
-            AngularGradient(gradient: Gradient(colors: [.red, .yellow, .green, .blue, .pink]), center: .center)
-                .edgesIgnoringSafeArea(.all)
+            BackgroundView()
             
             switch viewModel.state {
             case .playing(let viewState):
@@ -178,5 +189,22 @@ struct ContentView_Previews: PreviewProvider {
 //                .previewDevice("iPad Pro (12.9-inch) (4th generation)")
 //                .preferredColorScheme(.dark)
         }
+    }
+}
+
+struct BackgroundView: View {
+    @State private var gradientAngle: Double = 0
+    private let colors: [Color] = [.red, .orange, .yellow, .green, .blue, .pink, .purple]
+    
+    var body: some View {
+        Rectangle()
+            .fill(AngularGradient(gradient: Gradient(colors: colors), center: .center, angle: .degrees(gradientAngle)))
+            .overlay(Blur(style: .systemThinMaterial))
+            .edgesIgnoringSafeArea(.all)
+//            .onAppear {
+//                withAnimation(Animation.linear(duration: 12).repeatForever(autoreverses: false)) {
+//                    self.gradientAngle = 360
+//                }
+//            }
     }
 }

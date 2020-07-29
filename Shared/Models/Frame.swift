@@ -25,6 +25,7 @@ class Frame: Identifiable {
     private(set) var lastBallPotted: Ball?
     private(set) var remainingColors: [Ball] = Ball.colors
     private(set) var onFinalColors: Bool = false
+
     var pointsOnTheTable: Int {
         (remainingReds * 8) + availableColorPoints
     }
@@ -79,6 +80,7 @@ class Frame: Identifiable {
         totalReds = numberOfReds
         self.activePlayerPosition = player
         startNewBreak(forPlayerAt: player)
+        onFinalColors = numberOfReds == 0
     }
     
     var winnerPosition: PlayerPosition? {
@@ -189,7 +191,7 @@ extension Frame {
     
     var possibleTotalForActivePlayer: Int {
         let points = activePlayerScore + pointsOnTheTable
-        return lastBallPotted == .red ? points - 1 : points
+        return lastBallPotted == .red ? points + 7 : points
     }
 }
 
