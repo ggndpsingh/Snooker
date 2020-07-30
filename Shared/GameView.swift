@@ -19,7 +19,7 @@ struct MainView: View {
     
     var body: some View {
         ZStack {
-            BackgroundView()
+            MeshView.shared
             
             switch viewModel.state {
             case .playing(let viewState):
@@ -68,24 +68,22 @@ struct GameView: View {
     let startNextFrameHandler: () -> Void
     
     var body: some View {
-        ZStack {
-            VStack {
-                PlayersView(viewState: viewState)
-                BallsView(ballOn: viewState.ballOn, potAction: { ball in
-                    actionHandler(.pot(ball))
-                })
-                
-                AvailablePointsView(viewState: viewState.toWinViewState)
-                
-                Spacer()
-                
-                SwitchPlayerView(
-                    switchPlayerHandler: {
-                        actionHandler(.switchPlayer)
-                    },
-                    nextFrameHandler: startNextFrameHandler
-                )
-            }
+        VStack {
+            PlayersView(viewState: viewState)
+            BallsView(ballOn: viewState.ballOn, potAction: { ball in
+                actionHandler(.pot(ball))
+            })
+            
+            AvailablePointsView(viewState: viewState.toWinViewState)
+            
+            Spacer()
+            
+            SwitchPlayerView(
+                switchPlayerHandler: {
+                    actionHandler(.switchPlayer)
+                },
+                nextFrameHandler: startNextFrameHandler
+            )
         }
     }
 }
@@ -189,22 +187,5 @@ struct ContentView_Previews: PreviewProvider {
 //                .previewDevice("iPad Pro (12.9-inch) (4th generation)")
 //                .preferredColorScheme(.dark)
         }
-    }
-}
-
-struct BackgroundView: View {
-    @State private var gradientAngle: Double = 0
-    private let colors: [Color] = [.red, .orange, .yellow, .green, .blue, .pink, .purple]
-    
-    var body: some View {
-        Rectangle()
-            .fill(AngularGradient(gradient: Gradient(colors: colors), center: .center, angle: .degrees(gradientAngle)))
-            .overlay(Blur(style: .systemThinMaterial))
-            .edgesIgnoringSafeArea(.all)
-//            .onAppear {
-//                withAnimation(Animation.linear(duration: 12).repeatForever(autoreverses: false)) {
-//                    self.gradientAngle = 360
-//                }
-//            }
     }
 }

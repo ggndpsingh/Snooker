@@ -79,8 +79,9 @@ struct StartGameFormView: View {
                     }
                 }.frame(maxWidth: .infinity, idealHeight: 44)
             }
+            .opacity(0.7)
             .font(.subheadline)
-            .background(BackgroundView())
+            .background(MeshView.shared)
         }
         .fullScreenCover(isPresented: $isPresentingGameView, content: {
             MainView(viewModel: .init(game: makeGame()))

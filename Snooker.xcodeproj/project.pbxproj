@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E6079E9624D2461800A9CD6B /* MeshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6079E9524D2461800A9CD6B /* MeshView.swift */; };
+		E6079E9724D2461800A9CD6B /* MeshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6079E9524D2461800A9CD6B /* MeshView.swift */; };
 		E6289FE424A5F4F800F2D747 /* Tests_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6289FE324A5F4F800F2D747 /* Tests_iOS.swift */; };
 		E6289FEF24A5F4F800F2D747 /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6289FEE24A5F4F800F2D747 /* Tests_macOS.swift */; };
 		E6289FF524A5F4F800F2D747 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E6289FCA24A5F4F800F2D747 /* Assets.xcassets */; };
@@ -61,6 +63,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E6079E9524D2461800A9CD6B /* MeshView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshView.swift; sourceTree = "<group>"; };
 		E6289FCA24A5F4F800F2D747 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E6289FCF24A5F4F800F2D747 /* Snooker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Snooker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6289FD224A5F4F800F2D747 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -146,6 +149,7 @@
 				E6D5CC0724CC10BA006725F8 /* AvailablePointsView.swift */,
 				E6D5CC0424CC0C2D006725F8 /* PlayersView.swift */,
 				E675E34724CABB1D008A9790 /* StartGameView.swift */,
+				E6079E9524D2461800A9CD6B /* MeshView.swift */,
 				E6D5CBFE24CBFE0B006725F8 /* GameViewModel.swift */,
 				E62A343C24C9C0710036D845 /* GameViewState.swift */,
 				E6289FCA24A5F4F800F2D747 /* Assets.xcassets */,
@@ -386,6 +390,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E6D5CBFF24CBFE0B006725F8 /* GameViewModel.swift in Sources */,
+				E6079E9624D2461800A9CD6B /* MeshView.swift in Sources */,
 				E62A343724C9BFDD0036D845 /* Frame.swift in Sources */,
 				E6D5CC0224CBFE25006725F8 /* GameState.swift in Sources */,
 				E62A343D24C9C0710036D845 /* GameViewState.swift in Sources */,
@@ -408,6 +413,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E6D5CC0024CBFE0B006725F8 /* GameViewModel.swift in Sources */,
+				E6079E9724D2461800A9CD6B /* MeshView.swift in Sources */,
 				E62A343824C9BFDD0036D845 /* Frame.swift in Sources */,
 				E6D5CC0324CBFE25006725F8 /* GameState.swift in Sources */,
 				E62A343E24C9C0710036D845 /* GameViewState.swift in Sources */,
