@@ -34,7 +34,7 @@ struct Wave: Shape, Hashable {
         path.move(to: CGPoint(x: 0, y: midHeight))
         
         // now count across individual horizontal points one by one
-        for x in stride(from: 0, through: width, by: 1) {
+        for x in stride(from: 0, through: width, by: 100) {
             // find our current position relative to the wavelength
             let relativeX = x / wavelength
             
@@ -64,7 +64,7 @@ struct MeshView: View {
     static let shared = MeshView()
     
     class ColorProvider {
-        private(set) var colors: [UIColor] = [.blue, .cyan, .orange, .red, .yellow, .green, .purple, .systemIndigo, .blue, .cyan, .orange, .red, .yellow, .green, .purple, .systemIndigo]
+        private(set) var colors: [UIColor] = [.blue, .cyan, .orange, .red, .yellow, .green, .purple, .systemIndigo]
         
         init() {
             colors.shuffle()
@@ -89,6 +89,15 @@ struct MeshView: View {
         CGFloat(Array(stride(from: 40, to: 100, by: 20)).randomElement()!)
     }
     
+    var randomOpacity: Double {
+//        return 0
+        Double(Array(6...10).randomElement()!) / 10
+    }
+    
+    private func makeAnimation(duration: TimeInterval) -> Animation {
+        Animation.linear(duration: duration).delay(1).repeatForever(autoreverses: true)
+    }
+    
     let colors = ColorProvider().colors.map(Color.init)
     
     var body: some View {
@@ -102,57 +111,64 @@ struct MeshView: View {
                             .frame(width: 300, height: 500)
                             .foregroundColor(colors[0])
                             .blur(radius: randomBlur)
+                            .opacity(randomOpacity)
                             .offset(x: -20, y: 300)
                             .scaleEffect(CGFloat(Array(0...3).randomElement()!))
-                            .animation(Animation.linear(duration: 10).repeatForever(autoreverses: true))
+                            .animation(makeAnimation(duration: 10))
 
                         Circle()
                             .frame(width: 500, height: 600)
                             .foregroundColor(colors[1])
                             .blur(radius: randomBlur)
+                            .opacity(randomOpacity)
                             .offset(x: -70, y: -160)
                             .scaleEffect(CGFloat(Array(0...3).randomElement()!))
-                            .animation(Animation.linear(duration: 20).repeatForever(autoreverses: true))
+                            .animation(makeAnimation(duration: 24))
                         
                         Circle()
                             .frame(width: 200, height: 200)
                             .foregroundColor(colors[2])
                             .blur(radius: randomBlur)
+                            .opacity(randomOpacity)
                             .offset(x: 200, y: 400)
                             .scaleEffect(CGFloat(Array(0...3).randomElement()!))
-                            .animation(Animation.linear(duration: 30).repeatForever(autoreverses: true))
+                            .animation(makeAnimation(duration: 36))
                         
                         Circle()
                             .frame(width: 200, height: 200)
                             .foregroundColor(colors[3])
                             .blur(radius: randomBlur)
+                            .opacity(randomOpacity)
                             .offset(x: 20, y: -160)
                             .scaleEffect(CGFloat(Array(0...3).randomElement()!))
-                            .animation(Animation.linear(duration: 15).repeatForever(autoreverses: true))
+                            .animation(makeAnimation(duration: 16))
                         
                         Wave(strength: randomStrength, frequency: randomFrequency, phase: randomPhase)
                             .foregroundColor(colors[4])
                             .offset(y: -400)
                             .blur(radius: randomBlur)
+                            .opacity(randomOpacity)
                             .rotation3DEffect(Angle(degrees: 10), axis: (x: 20.0, y: 10.0, z: 90.0))
 
                         Wave(strength: randomStrength, frequency: randomFrequency, phase: randomPhase)
                             .foregroundColor(.init(colors[5]))
                             .offset(x: 0, y: 400)
                             .blur(radius: randomBlur)
+                            .opacity(randomOpacity)
                             .rotation3DEffect(Angle(degrees: 10), axis: (x: 50.0, y: 80.0, z: 120.0))
 
                         Wave(strength: randomStrength, frequency: randomFrequency, phase: randomPhase)
                             .foregroundColor(.init(colors[6]))
                             .blur(radius: randomBlur)
+                            .opacity(randomOpacity)
                     }
                 }
-                .overlay(Blur(style: .systemUltraThinMaterialLight)) 
+                .overlay(Blur(style: .systemUltraThinMaterialLight))
             }
             .edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
         }
         .onAppear {
-            withAnimation(Animation.linear(duration: 30).repeatForever(autoreverses: false)) {
+            withAnimation(Animation.linear(duration: 30).delay(1).repeatForever(autoreverses: false)) {
                 self.phase = .pi * 2
             }
         }

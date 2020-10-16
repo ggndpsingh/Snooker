@@ -19,8 +19,6 @@ struct MainView: View {
     
     var body: some View {
         ZStack {
-            MeshView.shared
-            
             switch viewModel.state {
             case .playing(let viewState):
                 GameView(viewState: viewState, actionHandler: viewModel.perform, startNextFrameHandler: viewModel.startNextFrame)
